@@ -1,9 +1,11 @@
-const blockHeaderBuilder = () => {
+import { Team } from "./GifPicker"
+
+const blockHeaderBuilder = (team:Team):any => {
   return{  
   type: "header",
 		text: {
 			type: "plain_text",
-			text: "Congratulations!"
+			text: `Congratulations ${team}!`
     }
   }
 }
@@ -38,9 +40,9 @@ const {image, altText} = params
   }
 }
 
-const finalBlockBuilder = (params:{repoName:string, releaseNum:string, releaseURL:string, image:string, altText:string}) => {
-const {repoName, releaseNum, releaseURL, image, altText} = params
-let blocks = []
-blocks.push(blockHeaderBuilder(), blockButtonBuilder({repoName:repoName, releaseNum:releaseNum, releaseURL:releaseURL}), blockImageBuilder({image:image, altText:altText}))
+export const finalBlockBuilder = (params:{team:Team, repoName:string, releaseNum:string, releaseURL:string, image:string, altText:string}) => {
+const {team, repoName, releaseNum, releaseURL, image, altText} = params
+let blocks = new Array<any>()
+blocks.push(blockHeaderBuilder(team), blockButtonBuilder({repoName:repoName, releaseNum:releaseNum, releaseURL:releaseURL}), blockImageBuilder({image:image, altText:altText}))
 return blocks
 }
