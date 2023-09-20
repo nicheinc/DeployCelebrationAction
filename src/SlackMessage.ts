@@ -16,13 +16,13 @@ const {repoName, releaseNum, releaseURL} = params
 			type: "section",
 			text: {
 				type: "mrkdwn",
-				text: "View deploy changes"
+				text: `${repoName}/${releaseNum}`
 			},
 			accessory: {
 				type: "button",
 				text: {
 					type: "plain_text",
-					text: `${repoName}/${releaseNum}`
+					text: "View changes"
 				},
 				value: "View changes",
 				url: `${releaseURL}`,
