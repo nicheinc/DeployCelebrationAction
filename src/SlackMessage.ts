@@ -41,8 +41,8 @@ const {image, altText} = params
 }
 
 export const finalBlockBuilder = (params:{team:Team, repoName:string, releaseNum:string, releaseURL:string, image:string, altText:string}) => {
-const {team, repoName, releaseNum, releaseURL, image, altText} = params
-let blocks = new Array<any>()
-blocks.push(blockHeaderBuilder(team), blockButtonBuilder({repoName:repoName, releaseNum:releaseNum, releaseURL:releaseURL}), blockImageBuilder({image:image, altText:altText}))
-return blocks
+	const {team, repoName, releaseNum, releaseURL, image, altText} = params
+	let blocks = new Array<any>()
+	blocks.push(blockHeaderBuilder(team), blockButtonBuilder({repoName:repoName, releaseNum:releaseNum, releaseURL:releaseURL}), blockImageBuilder({image:image, altText:altText}))
+	return blocks
 }
