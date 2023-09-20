@@ -28,12 +28,14 @@ const getGif = (team) => {
 
 const getTeamsFromRepo = (repo) => ['foxtrot'];
 
+const getChannelFromTeam = (team) => team;
+
 const sendSuccessMessage = async(client, data = {}) => {
     
-    const channel = data.team;
+    const channel = getChannelFromTeam(data.team);
     const gif = getGif(data.team);
     console.log(gif);
-    const text = `new hello ${gif}`;
+    const text = `${data.repo} was just updated with ${data.revision} ${data.githubLink} ${gif}`;
     // add the message block here
     await client.chat.postMessage({ text, channel});
 };
