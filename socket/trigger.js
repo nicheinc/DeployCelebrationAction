@@ -2,12 +2,12 @@ require('dotenv').config({
     multiline: true,
     path: `.env`,
   });
-//import { getGif } from '../src/GifPicker';
 const { App } = require('@slack/bolt');
+const fs = require('fs');
 const { getGif } = require('../src/GifPicker');
 const { finalBlockBuilder } = require('../src/SlackMessage');
+const {findTeam} = require('../src/TeamService');
 const FLUXBOT_USER = 'U037RFETB7C'; //ME, REPLACE
-const fs = require('fs');
 
 const app = new App({
   token: process.env.BOT_TOKEN,
@@ -15,8 +15,6 @@ const app = new App({
   socketMode: true,
   ignoreSelf: false,
 });
-
-const getTeamsFromRepo = (repo) => ['foxtrot'];
 
 const getChannelFromTeam = (team) => team;
 
@@ -26,7 +24,7 @@ const sendSuccessMessage = async(client, data = {}) => {
     const gif = getGif(data.team);
 
     const text = `${data.repo} was just updated with ${data.revision} ${data.githubLink} ${gif}`;
-    
+
     const blocks = finalBlockBuilder({ team: data.team, repoName: data.repo, releaseNum: data.revision, releaseURL: data.githubLink, image: gif, altText: `${data.team} gif` });
 
     await client.chat.postMessage({ text, channel, blocks});
@@ -53,10 +51,10 @@ const sendSuccessMessage = async(client, data = {}) => {
         const revision = message.text.match(new RegExp('revision\n(.*)\nsummary'))[1];
         const repo = message.text.match(new RegExp('^helmrelease/(.*)\.default'))[1];
         const githubLink = `https://github.com/nicheinc/${repo}/releases/tag/helm-chart-${revision}`;
-        const teams = getTeamsFromRepo(repo);
-        for (const team of teams) {
-          await sendSuccessMessage(client, { team, repo, revision, githubLink});
-        }
+        console.log(repo)
+        const team = findTeam(repo);
+        console.log(team);
+        await sendSuccessMessage(client, { team, repo, revision, githubLink});
         //const githubMessage = savedGitHubMessages.filter((githubMessage) => githubMessage.revision == revision && githubMessage.repo == repo)[0];
         //console.log({githubMessage});
         //const githubMessage = client.search.messages({ query: `in:${message.channel} helm`, sort: 'timestamp'});
