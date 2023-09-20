@@ -4,8 +4,8 @@ require('dotenv').config({
   });
 //import { getGif } from '../src/GifPicker';
 const { App } = require('@slack/bolt');
-//const { getGif } = require('../src/GifPicker');
-//const { finalBlockBuilder } = require('../src/SlackMessage');
+const { getGif } = require('../src/GifPicker');
+const { finalBlockBuilder } = require('../src/SlackMessage');
 const FLUXBOT_USER = 'U037RFETB7C'; //ME, REPLACE
 const fs = require('fs');
 
@@ -16,16 +16,6 @@ const app = new App({
   ignoreSelf: false,
 });
 
-const getGif = (team) => {
-  try {
-    const gifs = fs.readdirSync(`./gifs/${team}`);
-    const gif = gifs[Math.floor(Math.random() * gifs.length)];
-    return `./gifs/${team}/${gif}`;}
-  catch (err) {
-    console.log("Error: " + err);
-  }
-};
-
 const getTeamsFromRepo = (repo) => ['foxtrot'];
 
 const getChannelFromTeam = (team) => team;
@@ -34,10 +24,12 @@ const sendSuccessMessage = async(client, data = {}) => {
     
     const channel = getChannelFromTeam(data.team);
     const gif = getGif(data.team);
-    console.log(gif);
+
     const text = `${data.repo} was just updated with ${data.revision} ${data.githubLink} ${gif}`;
-    // add the message block here
-    await client.chat.postMessage({ text, channel});
+    
+    const blocks = finalBlockBuilder({ team: data.team, repoName: data.repo, releaseNum: data.revision, releaseURL: data.githubLink, image: gif, altText: `${data.team} gif` });
+
+    await client.chat.postMessage({ text, channel, blocks});
 };
 
 (async () => {
