@@ -1,8 +1,11 @@
 const findTeam = (repo) => {
   switch (repo) {
-    case 'lead' || 'leadadmin' || 'salesforce':
+    case 'lead':
+    case 'leadadmin':
+    case 'salesforce':
       return 'foxtrot'
-    case 'tracks' || 'website':
+    case 'tracks':
+    case 'website':
      return 'bravo'
     case 'inventory':
       return 'indigo'
