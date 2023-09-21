@@ -6,7 +6,7 @@ const { App } = require('@slack/bolt');
 const fs = require('fs');
 const { getGif } = require('../src/GifPicker');
 const { finalBlockBuilder } = require('../src/SlackMessage');
-const {findTeam} = require('../src/TeamService');
+const {findTeams} = require('../src/TeamService');
 const FLUXBOT_USER = 'U037RFETB7C'; //ME, REPLACE
 
 const app = new App({
