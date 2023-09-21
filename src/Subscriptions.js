@@ -14,17 +14,38 @@ const getSubscriptions = () => {
  * if the channel key is there add the service to the array
  * else add the channel key and have the value be an array with the service as a string
 */
-const addSubscription = (channel, serviceName) => {  
+const addSubscription = (channel, serviceName) => { 
+  const service = serviceName.toLowerCase(); 
   const teamSubscriptions = getSubscriptions();
     if(teamSubscriptions[channel]){
-    teamSubscriptions[channel].push(serviceName);
+    teamSubscriptions[channel].push(service);
     fs.writeFileSync('./src/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
   }
   else{
-    teamSubscriptions[channel] = [serviceName];
+    teamSubscriptions[channel] = [service];
       fs.writeFileSync('./src/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
   }
   console.log(teamSubscriptions);
+}
+
+const removeSubscription = (channel, serviceName) => {
+  const service = serviceName.toLowerCase(); 
+  const teamSubscriptions = getSubscriptions();
+  console.log(teamSubscriptions);
+  
+  if(teamSubscriptions[channel]){
+     const repoIndex = teamSubscriptions[channel].indexOf(service)
+     console.log(repoIndex);
+    if(repoIndex > -1){
+    teamSubscriptions[channel].splice(repoIndex, 1)    
+    fs.writeFileSync('./src/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
+    console.log(teamSubscriptions);
+  } else {
+    console.log('Service not found');
+  };
+  } else{
+    console.log('channel does not exist');
+  }
 }
 
 /**
@@ -42,4 +63,4 @@ const findSubscriptions = (repo) => {
   return teams;
 }
 
-module.exports = {addSubscription, findSubscriptions};
+module.exports = {addSubscription, findSubscriptions, removeSubscription};

@@ -7,7 +7,7 @@ const fs = require('fs');
 const { getGif } = require('../src/GifPicker');
 const { finalBlockBuilder } = require('../src/SlackMessage');
 const FLUXBOT_USER = 'U037RFETB7C'; //ME, REPLACE
-const {addSubscription, findSubscriptions} = require('../src/Subscriptions');
+const {addSubscription, findSubscriptions, removeSubscription} = require('../src/Subscriptions');
 
 const app = new App({
   token: process.env.BOT_TOKEN,
@@ -41,6 +41,16 @@ const sendSuccessMessage = async(client, data = {}) => {
     const serviceName = command.text.split(' ')[1];
     console.log('channel ', channel, ' service ', serviceName);
     addSubscription(channel, serviceName);
+  });
+  app.command('/unsubscribe', async ({command, client, ack}) => {
+    await ack();
+    console.log('started subscribe');
+    //team service
+    console.log(command.text);
+    const channel = command.text.split(' ')[0].replace('#', '');
+    const serviceName = command.text.split(' ')[1];
+    console.log('channel ', channel, ' service ', serviceName);
+    removeSubscription(channel, serviceName);
   });
   app.command('/testit', async ({command, client, ack}) => {
     await ack();
