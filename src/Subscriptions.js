@@ -2,10 +2,10 @@ const fs = require('fs');
 
 /** Checks if the teamSubscriptions.json file exists. If it does not creates it if not*/
 const getSubscriptions = () => {
-  if(!fs.existsSync('./src/teamSubscriptions.json')){
-    fs.writeFileSync('./src/teamSubscriptions.json', JSON.stringify({}));
+  if(!fs.existsSync('./data/teamSubscriptions.json')){
+    fs.writeFileSync('./data/teamSubscriptions.json', JSON.stringify({}));
   }
-  const teamSubscriptions = JSON.parse(fs.readFileSync('./src/teamSubscriptions.json', { encoding: 'utf8'}));
+  const teamSubscriptions = JSON.parse(fs.readFileSync('./data/teamSubscriptions.json', { encoding: 'utf8'}));
   console.log(teamSubscriptions);
   return teamSubscriptions;
 }
@@ -19,11 +19,11 @@ const addSubscription = (channel, serviceName) => {
   const teamSubscriptions = getSubscriptions();
     if(teamSubscriptions[channel]){
     teamSubscriptions[channel].push(service);
-    fs.writeFileSync('./src/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
+    fs.writeFileSync('./data/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
   }
   else{
     teamSubscriptions[channel] = [service];
-      fs.writeFileSync('./src/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
+      fs.writeFileSync('./data/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
   }
   console.log(teamSubscriptions);
 }
@@ -38,7 +38,7 @@ const removeSubscription = (channel, serviceName) => {
      console.log(repoIndex);
     if(repoIndex > -1){
     teamSubscriptions[channel].splice(repoIndex, 1)    
-    fs.writeFileSync('./src/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
+    fs.writeFileSync('./data/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
     console.log(teamSubscriptions);
   } else {
     console.log('Service not found');
