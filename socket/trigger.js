@@ -6,8 +6,8 @@ const { App } = require('@slack/bolt');
 const fs = require('fs');
 const { getGif } = require('../src/GifPicker');
 const { finalBlockBuilder } = require('../src/SlackMessage');
-const {findTeams} = require('../src/TeamService');
 const FLUXBOT_USER = 'U037RFETB7C'; //ME, REPLACE
+const {addSubscription, findSubscriptions} = require('../src/Subscriptions');
 
 const app = new App({
   token: process.env.BOT_TOKEN,
@@ -32,6 +32,16 @@ const sendSuccessMessage = async(client, data = {}) => {
 
 (async () => {
   await app.start();
+  app.command('/subscribe', async ({command, client, ack}) => {
+    await ack();
+    console.log('started subscribe');
+    //team service
+    console.log(command.text);
+    const channel = command.text.split(' ')[0].replace('#', '');
+    const serviceName = command.text.split(' ')[1];
+    console.log('channel ', channel, ' service ', serviceName);
+    addSubscription(channel, serviceName);
+  });
   app.command('/testit', async ({command, client, ack}) => {
     await ack();
       console.log('started');
@@ -51,7 +61,7 @@ const sendSuccessMessage = async(client, data = {}) => {
         const revision = message.text.match(new RegExp('revision\n(.*)\nsummary'))[1];
         const repo = message.text.match(new RegExp('^helmrelease/(.*)\.default'))[1];
         const githubLink = `https://github.com/nicheinc/${repo}/releases/tag/helm-chart-${revision}`;
-        const teams = findTeams(repo);
+        const teams = findSubscriptions(repo);
         for (const team of teams) {
           await sendSuccessMessage(client, { team, repo, revision, githubLink});
         }
