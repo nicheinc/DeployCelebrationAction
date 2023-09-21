@@ -35,30 +35,22 @@ const sendSuccessMessage = async(client, data = {}) => {
   await app.start();
   app.command('/subscribe', async ({command, ack, respond}) => {
     await ack();
-    console.log('started subscribe');
-    //team service
-    console.log(command.text);
-    const team = command.text.split(' ')[0].replace('#', '').toLowerCase();
+    const team = command.text.split(' ')[0].toLowerCase();
     const serviceName = command.text.split(' ')[1];
 
     if(Teams.hasOwnProperty(team)){
-      console.log('team ', team, ' service ', serviceName);
       addSubscription(team, serviceName);
       await respond(`${team} subscribed to successful ${serviceName} deployments`)
     } else {
-      await respond(`${team} is not a product team, cannot subscribe to deployment updates`);
+      await respond(`${team} is not a recognized product team. Cannot subscribe`);
     }
   });
   app.command('/unsubscribe', async ({command, ack, respond}) => {
     await ack();
-    console.log('started subscribe');
-    //team service
-    console.log(command.text);
-    const team = command.text.split(' ')[0].replace('#', '');
+    const team = command.text.split(' ')[0].toLowerCase();
     const serviceName = command.text.split(' ')[1];
-    console.log('team ', team, ' service ', serviceName);
-    removeSubscription(team, serviceName);
-    await respond(`${team} unsubscribed from ${serviceName} deployments`)
+    const removalResult = removeSubscription(team, serviceName);
+    await respond(removalResult)
   });
   app.command('/testit', async ({command, client, ack}) => {
     await ack();

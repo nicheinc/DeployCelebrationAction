@@ -40,11 +40,12 @@ const removeSubscription = (channel, serviceName) => {
     teamSubscriptions[channel].splice(repoIndex, 1)    
     fs.writeFileSync('./data/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
     console.log(teamSubscriptions);
+    return `${channel} successfully unsubscribed from ${service} deploys`
   } else {
-    console.log('Service not found');
+    return `A deploy subscription to the ${service} service was no found for ${channel}`
   };
   } else{
-    console.log('channel does not exist');
+    return `There are no deploy subscriptions for ${channel}`
   }
 }
 
