@@ -8,6 +8,7 @@ const { getGif } = require('../src/GifPicker');
 const { finalBlockBuilder } = require('../src/SlackMessage');
 const FLUXBOT_USER = 'U037RFETB7C'; //ME, REPLACE
 const {addSubscription, findSubscriptions, removeSubscription} = require('../src/Subscriptions');
+const Teams = JSON.parse(fs.readFileSync('./data/product-teams.json', { encoding: 'utf8'}))
 
 const app = new App({
   token: process.env.BOT_TOKEN,
@@ -32,25 +33,32 @@ const sendSuccessMessage = async(client, data = {}) => {
 
 (async () => {
   await app.start();
-  app.command('/subscribe', async ({command, client, ack}) => {
+  app.command('/subscribe', async ({command, ack, respond}) => {
     await ack();
     console.log('started subscribe');
     //team service
     console.log(command.text);
-    const channel = command.text.split(' ')[0].replace('#', '');
+    const team = command.text.split(' ')[0].replace('#', '').toLowerCase();
     const serviceName = command.text.split(' ')[1];
-    console.log('channel ', channel, ' service ', serviceName);
-    addSubscription(channel, serviceName);
+
+    if(Teams.hasOwnProperty(team)){
+      console.log('team ', team, ' service ', serviceName);
+      addSubscription(team, serviceName);
+      await respond(`${team} subscribed to successful ${serviceName} deployments`)
+    } else {
+      await respond(`${team} is not a product team, cannot subscribe to deployment updates`);
+    }
   });
-  app.command('/unsubscribe', async ({command, client, ack}) => {
+  app.command('/unsubscribe', async ({command, ack, respond}) => {
     await ack();
     console.log('started subscribe');
     //team service
     console.log(command.text);
-    const channel = command.text.split(' ')[0].replace('#', '');
+    const team = command.text.split(' ')[0].replace('#', '');
     const serviceName = command.text.split(' ')[1];
-    console.log('channel ', channel, ' service ', serviceName);
-    removeSubscription(channel, serviceName);
+    console.log('team ', team, ' service ', serviceName);
+    removeSubscription(team, serviceName);
+    await respond(`${team} unsubscribed from ${serviceName} deployments`)
   });
   app.command('/testit', async ({command, client, ack}) => {
     await ack();
