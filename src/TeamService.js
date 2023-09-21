@@ -1,16 +1,16 @@
-const findTeam = (repo) => {
+const findTeams = (repo) => {
   switch (repo) {
     case 'lead':
     case 'leadadmin':
     case 'salesforce':
-      return 'foxtrot'
+      return ['foxtrot'];
     case 'tracks':
     case 'website':
-     return 'bravo'
+     return ['bravo'];
     case 'inventory':
-      return 'indigo'
+      return ['indigo']
     default:
-      return 'Team not found for this repo'
+      return [];
   }
 }
-module.exports = { findTeam }
+module.exports = { findTeams }

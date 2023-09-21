@@ -51,8 +51,10 @@ const sendSuccessMessage = async(client, data = {}) => {
         const revision = message.text.match(new RegExp('revision\n(.*)\nsummary'))[1];
         const repo = message.text.match(new RegExp('^helmrelease/(.*)\.default'))[1];
         const githubLink = `https://github.com/nicheinc/${repo}/releases/tag/helm-chart-${revision}`;
-        const team = findTeam(repo);
-        await sendSuccessMessage(client, { team, repo, revision, githubLink});
+        const teams = findTeams(repo);
+        for (const team of teams) {
+          await sendSuccessMessage(client, { team, repo, revision, githubLink});
+        }
         //const githubMessage = savedGitHubMessages.filter((githubMessage) => githubMessage.revision == revision && githubMessage.repo == repo)[0];
         //console.log({githubMessage});
         //const githubMessage = client.search.messages({ query: `in:${message.channel} helm`, sort: 'timestamp'});
