@@ -77,8 +77,12 @@ const sendSuccessMessage = async(client, data = {}) => {
     await client.chat.postMessage({ text, channel, blocks});
 };
 
-const sendSuccessDM = async(client, user = {}) => {
-  
+const sendSuccessDM = async(client, user, data = {}) => {
+  console.log('from success message', user);
+  const gif = getGif();
+
+  const blocks = finalBlockBuilder({ team: '', repoName: data.repo, releaseNum: data.revision, releaseURL: data.githubLink, image: gif, altText: `${data.team} gif` });
+  await client.chat.postMessage({ text, user, blocks});
 }
 
 (async () => {
@@ -144,6 +148,12 @@ const sendSuccessDM = async(client, user = {}) => {
     const teams = findSubscriptions(parsed.repo, 'team');
     for (const team of teams) {
       await sendSuccessMessage(client, { team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
+    }
+
+    const users = findSubscriptions(parsed.repo, 'user');
+    for (const user of users) {
+      console.log('sending to user');
+      await sendSuccessDM(client, user, {repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
     }
   });
   app.event('reaction_added', async ({event, client}) => {
