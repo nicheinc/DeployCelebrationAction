@@ -97,6 +97,17 @@ const sendSuccessMessage = async(client, data = {}) => {
     const removalResult = removeSubscription(team, serviceName);
     await respond(removalResult)
   });
+  app.command('/subscribeMe', async ({command, ack, respond}) => {
+    await ack();
+    const user = command.user_id;
+    //call to the method to add the user to the subscriptions
+    //respond with a message that they have been subscribed
+  });
+  app.command('/unsubscribeMe', async ({command, ack, respond}) => {
+    await ack();
+    const user = command.user_id;
+    //call to the method to remove the user from the subscriptions
+  });
   app.command('/testit', async ({command, client, ack}) => {
     await ack();
       console.log('started');
