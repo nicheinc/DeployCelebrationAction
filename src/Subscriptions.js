@@ -11,7 +11,7 @@ const getSubscriptions = (subscriptionType) => {
     if(!fs.existsSync(`./data/${subscriptionType}Subscriptions.json`)){
       fs.writeFileSync(`./data/${subscriptionType}Subscriptions.json`, JSON.stringify({}));
     }
-    const subscriptions = JSON.parse(fs.readFileSync('./data/teamSubscriptions.json', { encoding: 'utf8'}));
+    const subscriptions = JSON.parse(fs.readFileSync(`./data/${subscriptionType}Subscriptions.json`, { encoding: 'utf8'}));
     console.log(subscriptions);
     return subscriptions;
   } catch (error) {
@@ -29,11 +29,11 @@ const addSubscription = (channel, serviceName, subscriptionType) => {
   const teamSubscriptions = getSubscriptions(subscriptionType);
     if(teamSubscriptions[channel]){
     teamSubscriptions[channel].push(service);
-    fs.writeFileSync('./data/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
+    fs.writeFileSync(`./data/${subscriptionType}Subscriptions.json`, JSON.stringify(teamSubscriptions));
   }
   else{
     teamSubscriptions[channel] = [service];
-      fs.writeFileSync('./data/teamSubscriptions.json', JSON.stringify(teamSubscriptions));
+      fs.writeFileSync(`./data/${subscriptionType}Subscriptions.json`, JSON.stringify(teamSubscriptions));
   }
   console.log(teamSubscriptions);
 }
@@ -41,23 +41,21 @@ const addSubscription = (channel, serviceName, subscriptionType) => {
 /**
  * @param subscriptionType: Valid types are a string 'user' or 'team'
  */
-const removeSubscription = (channel, serviceName, subscriptionType) => {
+const removeSubscription = (subscriber, serviceName, subscriptionType) => {
   const service = serviceName.toLowerCase(); 
-  const teamSubscriptions = getSubscriptions(subscriptionType);
-  console.log(teamSubscriptions);
-  
-  if(teamSubscriptions[channel]){
-    const repoIndex = teamSubscriptions[channel].indexOf(service)
+  const subscriptions = getSubscriptions(subscriptionType);
+
+  if(subscriptions[subscriber]){
+    const repoIndex = subscriptions[subscriber].indexOf(service)
     if(repoIndex > -1){
-    teamSubscriptions[channel].splice(repoIndex, 1)    
-    fs.writeFileSync(`./data/${subscriptionType}Subscriptions.json`, JSON.stringify(teamSubscriptions));
-    console.log(teamSubscriptions);
-    return `${channel} successfully unsubscribed from ${service} deploys`
+    subscriptions[subscriber].splice(repoIndex, 1)    
+    fs.writeFileSync(`./data/${subscriptionType}Subscriptions.json`, JSON.stringify(subscriptions));
+    return `$Successfully unsubscribed from ${service} deploys`
   } else {
-    return `A deploy subscription to the ${service} service was no found for ${channel}`
+    return `A deploy subscription to the ${service} service was no found`
   };
   } else{
-    return `There are no deploy subscriptions for ${channel}`
+    return `There are no deploy subscriptions for requested subscriber`
   }
 }
 

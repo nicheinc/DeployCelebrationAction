@@ -77,6 +77,10 @@ const sendSuccessMessage = async(client, data = {}) => {
     await client.chat.postMessage({ text, channel, blocks});
 };
 
+const sendSuccessDM = async(client, user = {}) => {
+  
+}
+
 (async () => {
   await app.start();
   app.command('/subscribe', async ({command, ack, respond}) => {
@@ -98,16 +102,26 @@ const sendSuccessMessage = async(client, data = {}) => {
     const removalResult = removeSubscription(team, serviceName, 'team');
     await respond(removalResult)
   });
-  app.command('/subscribeMe', async ({command, ack, respond}) => {
+  app.command('/subscribeme', async ({command, ack, respond}) => {
+    //TODO: adjust the methods in addSubscription to take in many services at once
     await ack();
     const user = command.user_id;
+    const serviceName = command.text.split(' ')[0]; //only taking the first service for now
+
     //call to the method to add the user to the subscriptions
-    //respond with a message that they have been subscribed
+    addSubscription(user, serviceName, 'user');
+    //respond with a message that they have been subscribed    
+    await respond(`You subscribed to successful ${serviceName} deployments`)
   });
-  app.command('/unsubscribeMe', async ({command, ack, respond}) => {
+  app.command('/unsubscribeme', async ({command, ack, respond}) => {
+    //todo: adjust the methods in removeSubscription to take in many services at once
     await ack();
     const user = command.user_id;
+    const serviceName = command.text.split(' ')[0]; //only taking the first service for now
+
     //call to the method to remove the user from the subscriptions
+    const removalResult = removeSubscription(user, serviceName, 'user');
+    await respond(removalResult)
   });
   app.command('/testit', async ({command, client, ack}) => {
     await ack();
