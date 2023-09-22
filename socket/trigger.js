@@ -6,7 +6,6 @@ const { App } = require('@slack/bolt');
 const fs = require('fs');
 const { getGif } = require('../src/GifPicker');
 const { finalBlockBuilder } = require('../src/SlackMessage');
-const FLUXBOT_USER = 'U037RFETB7C'; //ME, REPLACE
 const {addSubscription, findSubscriptions, removeSubscription} = require('../src/Subscriptions');
 const { getTeamFromReaction } = require('../src/Reactions');
 
@@ -113,20 +112,12 @@ const sendSuccessMessage = async(client, data = {}) => {
   app.message(new RegExp('^helmrelease.*Helm upgrade succeeded', 's'), async ({message, say, client}) => {
     console.log('message??');
     console.log(message);
-    if (true ||  message.user == FLUXBOT_USER) {
-        await say('hello');
+    await say('hello');
 
-        const revision = message.text.match(new RegExp('revision\n(.*)\nsummary'))[1];
-        const repo = message.text.match(new RegExp('^helmrelease/(.*)\.default'))[1];
-        const githubLink = `https://github.com/nicheinc/${repo}/releases/tag/helm-chart-${revision}`;
-        const teams = findSubscriptions(repo);
-        for (const team of teams) {
-          await sendSuccessMessage(client, { team, repo, revision, githubLink});
-        }
-        //const githubMessage = savedGitHubMessages.filter((githubMessage) => githubMessage.revision == revision && githubMessage.repo == repo)[0];
-        //console.log({githubMessage});
-        //const githubMessage = client.search.messages({ query: `in:${message.channel} helm`, sort: 'timestamp'});
-        //console.log(githubMessage);
+    const parsed = parseHelmMessage(message.text);
+    const teams = findSubscriptions(parsed.repo);
+    for (const team of teams) {
+      await sendSuccessMessage(client, { team: parsed.team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
     }
   });
   app.event('reaction_added', async ({event, client}) => {
