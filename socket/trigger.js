@@ -117,7 +117,7 @@ const sendSuccessMessage = async(client, data = {}) => {
     const parsed = parseHelmMessage(message.text);
     const teams = findSubscriptions(parsed.repo);
     for (const team of teams) {
-      await sendSuccessMessage(client, { team: parsed.team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
+      await sendSuccessMessage(client, { team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
     }
   });
   app.event('reaction_added', async ({event, client}) => {
