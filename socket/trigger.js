@@ -66,8 +66,9 @@ const parseGitHubMessage = (message) => {
   }
 };
 const sendSuccessMessage = async(client, data = {}) => {
-    
+    console.log('from success message',data.team)
     const channel = getChannelFromTeam(data.team);
+    console.log('from success message',channel);
     const gif = getGif(data.team);
 
     const text = `${data.repo} was just updated with ${data.revision} ${data.githubLink} ${gif}`;
@@ -84,7 +85,7 @@ const sendSuccessMessage = async(client, data = {}) => {
     const serviceName = command.text.split(' ')[1];
 
     if(Teams.hasOwnProperty(team)){
-      addSubscription(team, serviceName);
+      addSubscription(team, serviceName, 'team');
       await respond(`${team} subscribed to successful ${serviceName} deployments`)
     } else {
       await respond(`${team} is not a recognized product team. Cannot subscribe`);
@@ -94,7 +95,7 @@ const sendSuccessMessage = async(client, data = {}) => {
     await ack();
     const team = command.text.split(' ')[0].toLowerCase();
     const serviceName = command.text.split(' ')[1];
-    const removalResult = removeSubscription(team, serviceName);
+    const removalResult = removeSubscription(team, serviceName, 'team');
     await respond(removalResult)
   });
   app.command('/subscribeMe', async ({command, ack, respond}) => {
@@ -126,9 +127,9 @@ const sendSuccessMessage = async(client, data = {}) => {
     await say('hello');
 
     const parsed = parseHelmMessage(message.text);
-    const teams = findSubscriptions(parsed.repo);
+    const teams = findSubscriptions(parsed.repo, 'team');
     for (const team of teams) {
-      await sendSuccessMessage(client, { team: parsed.team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
+      await sendSuccessMessage(client, { team: team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
     }
   });
   app.event('reaction_added', async ({event, client}) => {
