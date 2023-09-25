@@ -4,9 +4,8 @@ require('dotenv').config({
   });
 const { App } = require('@slack/bolt');
 const fs = require('fs');
-
 const { sendSuccessMessage } = require('../src/SlackMessage');
-const {addSubscription, findSubscriptions, removeSubscription} = require('../src/Subscriptions');
+const { addSubscription, findSubscriptions, removeSubscription } = require('../src/Subscriptions');
 const { getTeamFromReaction } = require('../src/Reactions');
 const Teams = JSON.parse(fs.readFileSync('./data/product-teams.json', { encoding: 'utf8'}))
 
