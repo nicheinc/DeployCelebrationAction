@@ -1,3 +1,7 @@
+const fs = require('fs');
+const { getGif } = require('../src/GifPicker');
+const Teams = JSON.parse(fs.readFileSync('./data/product-teams.json', { encoding: 'utf8'}))
+
 const blockHeaderBuilder = (team) => {
   return {
     type: "header",
@@ -49,4 +53,24 @@ const finalBlockBuilder = (params) => {
   return blocks;
 };
 
-module.exports = { finalBlockBuilder };
+const sendSuccessMessage = async(client, data = {}) => {
+  const gif = getGif(data.subscriber);
+  let channel
+  let subscriber
+
+  if(Teams.hasOwnProperty(data.subscriber)){
+    //const getChannelFromTeam = (team) => `pt-${team}`;
+    channel = `pt-${data.subscriber}`
+    subscriber = data.subscriber
+  } else {
+    channel = data.subscriber
+    const userProfile = await client.users.profile.get({user: data.subscriber})
+    subscriber = userProfile.profile.display_name
+  }
+  const text = `${data.repo} was just updated with ${data.revision} ${data.githubLink} ${gif}`;
+  
+  const blocks = finalBlockBuilder({ team: subscriber, repoName: data.repo, releaseNum: data.revision, releaseURL: data.githubLink, image: gif, altText: `${data.subscriber} gif` });
+
+  await client.chat.postMessage({ text, channel, blocks});
+};
+module.exports = { sendSuccessMessage };

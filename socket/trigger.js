@@ -4,8 +4,8 @@ require('dotenv').config({
   });
 const { App } = require('@slack/bolt');
 const fs = require('fs');
-const { getGif } = require('../src/GifPicker');
-const { finalBlockBuilder } = require('../src/SlackMessage');
+
+const { sendSuccessMessage } = require('../src/SlackMessage');
 const {addSubscription, findSubscriptions, removeSubscription} = require('../src/Subscriptions');
 const { getTeamFromReaction } = require('../src/Reactions');
 const Teams = JSON.parse(fs.readFileSync('./data/product-teams.json', { encoding: 'utf8'}))
@@ -17,7 +17,7 @@ const app = new App({
   ignoreSelf: false,
 });
 
-const getChannelFromTeam = (team) => `pt-${team}`;
+//const getChannelFromTeam = (team) => `pt-${team}`;
 
 const parseHelmMessage = (message) => {
   try {
@@ -65,27 +65,6 @@ const parseGitHubMessage = (message) => {
     return {};
   }
 };
-const sendSuccessMessage = async(client, data = {}) => {
-    console.log('from success message',data.team)
-    const channel = getChannelFromTeam(data.team);
-    console.log('from success message',channel);
-    const gif = getGif(data.team);
-
-    const text = `${data.repo} was just updated with ${data.revision} ${data.githubLink} ${gif}`;
-
-    const blocks = finalBlockBuilder({ team: data.team, repoName: data.repo, releaseNum: data.revision, releaseURL: data.githubLink, image: gif, altText: `${data.team} gif` });
-    await client.chat.postMessage({ text, channel, blocks});
-};
-
-const sendSuccessDM = async(client, user, data = {}) => {
-  console.log('from success message', user);
-  const gif = getGif();
-
-  const text = `${data.repo} was just updated with ${data.revision} ${data.githubLink} ${gif}`;
-
-  const blocks = finalBlockBuilder({ team: '', repoName: data.repo, releaseNum: data.revision, releaseURL: data.githubLink, image: gif, altText: `${data.team} gif` });
-  await client.chat.postMessage({ text, channel: user, blocks});
-}
 
 (async () => {
   await app.start();
@@ -113,10 +92,7 @@ const sendSuccessDM = async(client, user, data = {}) => {
     await ack();
     const user = command.user_id;
     const serviceName = command.text.split(' ')[0]; //only taking the first service for now
-
-    //call to the method to add the user to the subscriptions
     addSubscription(user, serviceName, 'user');
-    //respond with a message that they have been subscribed    
     await respond(`You subscribed to successful ${serviceName} deployments`)
   });
   app.command('/unsubscribeme', async ({command, ack, respond}) => {
@@ -124,8 +100,6 @@ const sendSuccessDM = async(client, user, data = {}) => {
     await ack();
     const user = command.user_id;
     const serviceName = command.text.split(' ')[0]; //only taking the first service for now
-
-    //call to the method to remove the user from the subscriptions
     const removalResult = removeSubscription(user, serviceName, 'user');
     await respond(removalResult)
   });
@@ -142,20 +116,15 @@ const sendSuccessDM = async(client, user, data = {}) => {
       await client.chat.postMessage({ text: testMessage, channel: command.channel_name});
   });
   app.message(new RegExp('^helmrelease.*Helm upgrade succeeded', 's'), async ({message, say, client}) => {
-    console.log('message??');
-    console.log(message);
-    await say('hello');
+    // console.log('message??');
+    // console.log(message);
+    //await say('hello');
 
     const parsed = parseHelmMessage(message.text);
-    const teams = findSubscriptions(parsed.repo, 'team');
-    for (const team of teams) {
-      await sendSuccessMessage(client, { team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
-    }
-
-    const users = findSubscriptions(parsed.repo, 'user');
-    for (const user of users) {
-      console.log('sending to user');
-      await sendSuccessDM(client, user, {repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
+    const subscriptions = [...findSubscriptions(parsed.repo, 'team'), ...findSubscriptions(parsed.repo, 'user')];
+    
+    for (const subscriber of subscriptions) {
+      await sendSuccessMessage(client, { subscriber, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
     }
   });
   app.event('reaction_added', async ({event, client}) => {

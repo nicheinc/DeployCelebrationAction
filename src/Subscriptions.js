@@ -12,7 +12,7 @@ const getSubscriptions = (subscriptionType) => {
       fs.writeFileSync(`./data/${subscriptionType}Subscriptions.json`, JSON.stringify({}));
     }
     const subscriptions = JSON.parse(fs.readFileSync(`./data/${subscriptionType}Subscriptions.json`, { encoding: 'utf8'}));
-    console.log(subscriptions);
+    //console.log(subscriptions);
     return subscriptions;
   } catch (error) {
     console.log('getSubscriptions() Error: ', error);
@@ -35,7 +35,7 @@ const addSubscription = (channel, serviceName, subscriptionType) => {
     teamSubscriptions[channel] = [service];
       fs.writeFileSync(`./data/${subscriptionType}Subscriptions.json`, JSON.stringify(teamSubscriptions));
   }
-  console.log(teamSubscriptions);
+  //console.log(teamSubscriptions);
 }
 
 /**
@@ -66,14 +66,14 @@ const removeSubscription = (subscriber, serviceName, subscriptionType) => {
  */
 const findSubscriptions = (repo, subscriptionType) => {
   const subscriptions = getSubscriptions(subscriptionType);
-  console.log(subscriptions);
+  //console.log(subscriptions);
   const subscribers = [];
   for (const subscriber in subscriptions) {
     if (subscriptions[subscriber].includes(repo)) {
       subscribers.push(subscriber);
     }
   }
-  console.log(subscribers);
+  //console.log(subscribers);
   return subscribers;
 }
 
