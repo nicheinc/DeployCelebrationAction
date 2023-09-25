@@ -1,6 +1,8 @@
 const reactions = {
-    'white_check_mark': { team: 'bravo'},
-    'heart': { team: 'foxtrot'}
+    'bravocue': { team: 'bravo'},
+    'team-foxtrot': { team: 'foxtrot'},
+    'team-indigo-alt': { team: 'indigo'},
+    'echo': { team: 'echo'}
 }
 
 const getTeamFromReaction = (team) => {

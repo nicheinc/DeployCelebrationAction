@@ -166,7 +166,7 @@ const sendSuccessDM = async(client, user, data = {}) => {
     }
     const channel = event.item.channel;
     const ts = event.item.ts;
-    const message = await (await client.conversations.history({ channel: channel, oldest: ts, limit:1, inclusive: true})).messages[0];
+    const message = (await client.conversations.history({ channel: channel, oldest: ts, limit:1, inclusive: true})).messages[0];
     // check that the message only has 1 reaction of the one we care about
     const messageReactions = message.reactions.find((messageReaction) => messageReaction.name == reaction);
     if (messageReactions.count !== 1) {
