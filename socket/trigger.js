@@ -81,8 +81,10 @@ const sendSuccessDM = async(client, user, data = {}) => {
   console.log('from success message', user);
   const gif = getGif();
 
+  const text = `${data.repo} was just updated with ${data.revision} ${data.githubLink} ${gif}`;
+
   const blocks = finalBlockBuilder({ team: '', repoName: data.repo, releaseNum: data.revision, releaseURL: data.githubLink, image: gif, altText: `${data.team} gif` });
-  await client.chat.postMessage({ text, user, blocks});
+  await client.chat.postMessage({ text, channel: user, blocks});
 }
 
 (async () => {
