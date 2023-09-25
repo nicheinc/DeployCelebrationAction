@@ -3,18 +3,14 @@ ARG NODE_IMAGE="${REGISTRY}/node:16-alpine"
 FROM ${NODE_IMAGE} AS base
 
 WORKDIR /app
-COPY package.json package-lock.json tsconfig.json ./
-RUN npm ci --omit=optional
+COPY package.json package-lock.json ./
 
 FROM base AS build
 WORKDIR /app
 COPY . ./
-RUN npm run compile
+RUN npm i
 
 FROM ${NODE_IMAGE} AS final
-
-ARG NODE_ENV
-ENV NODE_ENV=${NODE_ENV}
 
 # Set the unprivileged "node" user as /app owner
 # Setting the "node" user as the owner of the directory and
@@ -25,4 +21,4 @@ USER node
 WORKDIR /app
 COPY --from=build --chown=node:node /app /app
 
-ENTRYPOINT ["./node_modules/.bin/bolt"]
+CMD [ "node", "./socket/trigger.js" ]
