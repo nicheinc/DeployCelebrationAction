@@ -155,7 +155,7 @@ const parseGitHubMessage = (message) => {
     if (!parsed.revision && !parsed.repo) {
       return;
     }
-    await sendSuccessMessage(client, { team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
+    await sendSuccessMessage(client, { subscriber: team, repo: parsed.repo, revision: parsed.revision, githubLink: parsed.githubLink});
   });
   console.log('⚡️ Bolt app started');
 })();
