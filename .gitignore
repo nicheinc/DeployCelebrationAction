@@ -1,3 +1,4 @@
 node_modules
 .env
 /data/teamSubscriptions.json
+/data/userSubscriptions.json
