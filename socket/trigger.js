@@ -17,8 +17,6 @@ const app = new App({
   ignoreSelf: false,
 });
 
-//const getChannelFromTeam = (team) => `pt-${team}`;
-
 const parseHelmMessage = (message) => {
   try {
   const revision = message.match(new RegExp('revision\n(.*)\nsummary'))[1];
