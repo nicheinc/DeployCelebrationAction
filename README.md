@@ -1,2 +1,0 @@
-# DeployCelebrationAction
-DeployCelebrationAction

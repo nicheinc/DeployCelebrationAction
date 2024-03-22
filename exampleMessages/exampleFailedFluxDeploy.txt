@@ -1,6 +1,0 @@
-helmrelease/salesforce.default
-reconciliation failed: Operation cannot be fulfilled on helmreleases.helm.toolkit.fluxcd.io "salesforce": the object has been modified; please apply your changes to the latest version and try again
-revision
-4.0.3
-summary
-Production Deployment Notifications
